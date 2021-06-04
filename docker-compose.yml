@@ -1,0 +1,46 @@
+version: "3"
+
+networks:
+  fullcycle:
+    driver: bridge
+
+services:
+  db:
+    container_name: db
+    build: ./db
+    image: thiagoalvesfoz/db
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "fullcycle"
+    tty: true
+    restart: always
+    volumes:
+      - ./mysql/:/var/lib/mysql
+    networks:
+      - fullcycle
+  
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    image: thiagoalvesfoz/frontend:latest
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on: 
+      - db
+    tty: true
+    restart: always
+    networks:
+      - fullcycle
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    image: thiagoalvesfoz/nginx
+    ports:
+      - "8080:80"
+    networks:
+      - fullcycle
+    restart: always
+
+
+
