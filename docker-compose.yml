@@ -1,14 +1,10 @@
 version: "3"
 
-networks:
-  fullcycle:
-    driver: bridge
-
 services:
   db:
     container_name: db
     build: ./db
-    image: thiagoalvesfoz/db
+    image: thiagoalvesfoz/db # nomeia a imagem buildada pelo docker-compose.
     environment:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "fullcycle"
@@ -18,14 +14,16 @@ services:
       - ./mysql/:/var/lib/mysql
     networks:
       - fullcycle
-  
+
   frontend:
     container_name: frontend
     build: ./frontend
-    image: thiagoalvesfoz/frontend:latest
+    image: thiagoalvesfoz/frontend:latest # nomeia a imagem buildada pelo docker-compose.
     volumes:
-      - ./frontend:/usr/src/app
-    depends_on: 
+      - ./frontend/:/usr/src/app/
+      - node_modules:/usr/src/app/node_modules
+    command: node index.js
+    depends_on:
       - db
     tty: true
     restart: always
@@ -35,12 +33,16 @@ services:
   nginx:
     container_name: nginx
     build: ./nginx
-    image: thiagoalvesfoz/nginx
+    image: thiagoalvesfoz/nginx # nomeia a imagem buildada pelo docker-compose.
     ports:
       - "8080:80"
     networks:
       - fullcycle
     restart: always
 
+volumes:
+  node_modules:
 
-
+networks:
+  fullcycle:
+    driver: bridge

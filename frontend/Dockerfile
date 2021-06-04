@@ -4,10 +4,8 @@ WORKDIR /usr/src/app
 
 RUN apk add bash
 
-COPY package*.json ./
+COPY . .
 
 RUN npm install
-
-COPY . .
 
 CMD ["node", "index.js"]
